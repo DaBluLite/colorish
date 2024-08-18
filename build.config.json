@@ -1,0 +1,55 @@
+{
+	"appId": "dev.dablulite.colorish",
+	"productName": "Colorish",
+	"directories": {
+		"output": "dist"
+	},
+	"linux": {
+		"icon": "./colorish.png",
+		"category": "Utility",
+		"description": "The official manager for Project Colorway-compatible apps.",
+		"desktop": {
+			"Name": "Colorish",
+			"Comment": "The official manager for Project Colorway-compatible apps.",
+			"StartupNotify": false
+		},
+		"target": [
+			{
+				"target": "AppImage",
+				"arch": [
+				  	"x64",
+					"arm64"
+				]
+			},
+			{
+				"target": "flatpak",
+				"arch": [
+				  	"x64",
+					"arm64"
+				]
+			},
+			{
+				"target": "deb",
+				"arch": [
+				  	"x64",
+					"arm64"
+				]
+			},
+			{
+				"target": "rpm",
+				"arch": [
+				  	"x64",
+					"arm64"
+				]
+			}
+		]
+	},
+	"files": [
+		"src/electron.cjs",
+		"src/preload.cjs",
+		{
+			"from": "build",
+			"to": ""
+		}
+	]
+}

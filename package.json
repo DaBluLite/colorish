@@ -1,0 +1,77 @@
+{
+	"name": "colorish",
+	"version": "1.0.0",
+	"private": true,
+	"description": "The official manager for Project Colorway-compatible apps.",
+	"main": "src/electron.cjs",
+	"type": "module",
+	"author": "DaBluLite",
+	"scripts": {
+		"dev": "cross-env NODE_ENV=dev npm run dev:all",
+		"dev:all": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run dev:svelte\" \"npm run dev:electron\"",
+		"dev:svelte": "vite dev",
+		"dev:electron": "electron src/electron.cjs",
+		"build": "cross-env NODE_ENV=production npm run build:svelte && npm run build:electron",
+		"build:svelte": "vite build",
+		"build:electron": "electron-builder -wl --config build.config.json"
+	},
+	"engines": {
+		"npm": ">=7",
+		"yarn": "use npm - https://github.com/FractalHQ/sveltekit-electron/issues/12#issuecomment-1068399385"
+	},
+	"browserslist": [
+		"Chrome 89"
+	],
+	"dependencies": {
+		"@auth/core": "^0.34.2",
+		"@auth/sveltekit": "^1.4.2",
+		"bootstrap-icons": "^1.11.3",
+		"cli-truncate": "^4.0.0",
+		"client": "link:@auth/sveltekit/client",
+		"discord": "link:@auth/sveltekit/providers/discord",
+		"electron-context-menu": "^3.6.1",
+		"electron-reloader": "^1.2.3",
+		"electron-serve": "^1.1.0",
+		"electron-window-state": "^5.0.3",
+		"jsonfile": "^6.1.0",
+		"mkdirp": "^3.0.1",
+		"shell": "^0.11.0",
+		"svelte-awesome-color-picker": "^3.1.2",
+		"universalify": "^2.0.1",
+		"ws": "^8.18.0"
+	},
+	"devDependencies": {
+		"@electron/packager": "^18.3.3",
+		"@sveltejs/adapter-static": "2.0.1",
+		"@sveltejs/kit": "1.14.0",
+		"@types/ws": "^8.5.12",
+		"@typescript-eslint/eslint-plugin": "^5.56.0",
+		"@typescript-eslint/parser": "^5.56.0",
+		"concurrently": "^7.6.0",
+		"cross-env": "^7.0.3",
+		"dotenv": "^16.0.3",
+		"electron": "^23.3.13",
+		"electron-builder": "^23.6.0",
+		"electron-connect": "^0.6.3",
+		"electron-updater": "^5.3.0",
+		"eslint": "^8.36.0",
+		"eslint-config-prettier": "^8.8.0",
+		"eslint-plugin-svelte3": "^4.0.0",
+		"npm-run-all": "^4.1.5",
+		"prettier": "^2.8.8",
+		"prettier-plugin-svelte": "^2.10.1",
+		"sass": "^1.60.0",
+		"svelte": "^3.57.0",
+		"svelte-check": "^3.1.4",
+		"svelte-preprocess": "^5.0.3",
+		"ts-node": "^10.9.2",
+		"tslib": "^2.5.0",
+		"typescript": "^4.9.4",
+		"vite": "^4.0.4"
+	},
+	"overrides": {
+		"electron": {
+			"got": "^12.5.1"
+		}
+	}
+}
