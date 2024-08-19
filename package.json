@@ -10,9 +10,9 @@
 		"name": "DaBluLite",
 		"email": "dablulite@gmail.com"
 	},
-	"homepage": "https://github.com/DaBluLite/colorish",
+	"homepage": "https://github.com/ProjectColorway/colorish",
 	"repository": {
-		"url": "https://github.com/DaBluLite/colorish"
+		"url": "https://github.com/ProjectColorway/colorish"
 	},
 	"scripts": {
 		"dev": "cross-env NODE_ENV=dev npm run dev:all",
@@ -21,7 +21,8 @@
 		"dev:electron": "electron src/electron.cjs",
 		"build": "cross-env NODE_ENV=production npm run build:svelte && npm run build:electron",
 		"build:svelte": "vite build",
-		"build:electron": "electron-builder -wl --config build.config.json"
+		"build:electron": "electron-builder -wl --config build.config.json",
+		"publish": "electron-builder -wl --config build.config.json -p onTagOrDraft"
 	},
 	"engines": {
 		"npm": ">=7",

@@ -14,6 +14,9 @@
 		"publish": ["github"]
 	},
 	"linux": {
+		"vendor": {
+			"name": "Project Colorway"
+		},
 		"icon": "build/icon.icns",
 		"category": "Utility",
 		"synopsis": "The official manager for Project Colorway-compatible apps.",
