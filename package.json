@@ -22,7 +22,7 @@
 		"build": "cross-env NODE_ENV=production npm run build:svelte && npm run build:electron",
 		"build:svelte": "vite build",
 		"build:electron": "electron-builder -wl --config build.config.json",
-		"publish": "electron-builder -wl --config build.config.json -p onTagOrDraft"
+		"build:p": "electron-builder -wl --config build.config.json -p onTagOrDraft"
 	},
 	"engines": {
 		"npm": ">=7",
