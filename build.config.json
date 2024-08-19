@@ -4,15 +4,27 @@
 	"directories": {
 		"output": "dist"
 	},
+	"flatpak": {
+		"synopsis": "The official manager for Project Colorway-compatible apps.",
+		"description": "The official manager for Project Colorway-compatible apps. Change, create and manage, all from one place.",
+		"useWaylandFlags": true
+	},
+	"win": {
+		"icon": "build/icon.ico",
+		"publish": ["github"]
+	},
 	"linux": {
-		"icon": "./colorish.png",
+		"icon": "build/icon.icns",
 		"category": "Utility",
-		"description": "The official manager for Project Colorway-compatible apps.",
+		"synopsis": "The official manager for Project Colorway-compatible apps.",
+		"description": "The official manager for Project Colorway-compatible apps. Change, create and manage, all from one place.",
 		"desktop": {
 			"Name": "Colorish",
 			"Comment": "The official manager for Project Colorway-compatible apps.",
 			"StartupNotify": false
 		},
+		"maintainer": "DaBluLite",
+		"publish": ["github"],
 		"target": [
 			{
 				"target": "AppImage",
@@ -29,14 +41,14 @@
 				]
 			},
 			{
-				"target": "deb",
+				"target": "rpm",
 				"arch": [
 				  	"x64",
 					"arm64"
 				]
 			},
 			{
-				"target": "rpm",
+				"target": "deb",
 				"arch": [
 				  	"x64",
 					"arm64"

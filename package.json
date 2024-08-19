@@ -2,10 +2,18 @@
 	"name": "colorish",
 	"version": "1.0.0",
 	"private": true,
-	"description": "The official manager for Project Colorway-compatible apps.",
+	"synopsis": "The official manager for Project Colorway-compatible apps.",
+	"description": "The official manager for Project Colorway-compatible apps. Change, create and manage, all from one place.",
 	"main": "src/electron.cjs",
 	"type": "module",
-	"author": "DaBluLite",
+	"author": {
+		"name": "DaBluLite",
+		"email": "dablulite@gmail.com"
+	},
+	"homepage": "https://github.com/DaBluLite/colorish",
+	"repository": {
+		"url": "https://github.com/DaBluLite/colorish"
+	},
 	"scripts": {
 		"dev": "cross-env NODE_ENV=dev npm run dev:all",
 		"dev:all": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run dev:svelte\" \"npm run dev:electron\"",

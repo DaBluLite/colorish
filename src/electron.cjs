@@ -5,7 +5,6 @@ const serve = require("electron-serve");
 const path = require("path");
 const { BrowserWindow, app, ipcMain, shell } = require("electron");
 const { WebSocket, WebSocketServer } = require("ws");
-require('ts-node').register();
 try {
     require("electron-reloader")(module);
 }
