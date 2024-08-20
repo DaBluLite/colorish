@@ -1,6 +1,6 @@
 {
 	"name": "colorish",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"private": true,
 	"synopsis": "The official manager for Project Colorway-compatible apps.",
 	"description": "The official manager for Project Colorway-compatible apps. Change, create and manage, all from one place.",
@@ -15,7 +15,7 @@
 		"url": "https://github.com/ProjectColorway/colorish"
 	},
 	"scripts": {
-		"dev": "cross-env NODE_ENV=dev npm run dev:all",
+		"dev": "cross-env NODE_ENV=production npm run dev:all",
 		"dev:all": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run dev:svelte\" \"npm run dev:electron\"",
 		"dev:svelte": "vite dev",
 		"dev:electron": "electron src/electron.cjs",

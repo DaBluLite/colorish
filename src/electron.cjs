@@ -259,3 +259,8 @@ ipcMain.on("complication:manager-role:manager-updated", (_, boundKey) => {
     const wsClient = wsClients.filter(ws => (typeof ws.boundKey.get() == "string" ? ws.boundKey.get() : JSON.stringify(ws.boundKey.get())) == JSON.stringify(boundKey))[0]
     wsClient.isManager.set(true);
 });
+
+ipcMain.on("complication:ui-summon:summon", (_, boundKey) => {
+    const wsClient = wsClients.filter(ws => (typeof ws.boundKey.get() == "string" ? ws.boundKey.get() : JSON.stringify(ws.boundKey.get())) == JSON.stringify(boundKey))[0]
+    wsClient.dispatch("complication:ui-summon:summon");
+});

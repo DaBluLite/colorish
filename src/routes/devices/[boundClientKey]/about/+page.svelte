@@ -102,38 +102,54 @@
 
 <div>
 	<div>
-		<button
-			class="button"
-			on:click={() => {
-				window.electron.sendToClient({
-					type: $boundClients[boundClientKey].isManager
-						? "complication:manager-role:revoked"
-						: "complication:manager-role:granted",
-					boundKey: boundClientKey,
-				});
-			}}
-		>
-			{$boundClients[boundClientKey] &&
-			($boundClients[boundClientKey].isManager || false)
-				? "Revoke"
-				: "Grant"} Manager Role
-		</button>
+		{#if $boundClients[boundClientKey].complications?.includes("manager-role")}
+			<button
+				class="button"
+				on:click={() => {
+					window.electron.sendToClient({
+						type: $boundClients[boundClientKey].isManager
+							? "complication:manager-role:revoked"
+							: "complication:manager-role:granted",
+						boundKey: boundClientKey,
+					});
+				}}
+			>
+				{$boundClients[boundClientKey] &&
+				($boundClients[boundClientKey].isManager || false)
+					? "Revoke"
+					: "Grant"} Manager Role
+			</button>
+		{/if}
 		<button
 			class="button"
 			on:click={() => navigator.clipboard.writeText(boundClientKey)}
 		>
 			Copy Bound Key
 		</button>
-		<button
-			class="button"
-			on:click={() =>
-				window.electron.sendToClient({
-					type: "complication:remote-sources:update-request",
-					boundKey: boundClientKey,
-				})}
-		>
-			Request Source Update
-		</button>
+		{#if $boundClients[boundClientKey].complications?.includes("remote-sources")}
+			<button
+				class="button"
+				on:click={() =>
+					window.electron.sendToClient({
+						type: "complication:remote-sources:update-request",
+						boundKey: boundClientKey,
+					})}
+			>
+				Request Source Update
+			</button>
+		{/if}
+		{#if $boundClients[boundClientKey].complications?.includes("ui-summon")}
+			<button
+				class="button"
+				on:click={() =>
+					window.electron.sendToClient({
+						type: "complication:ui-summon:summon",
+						boundKey: boundClientKey,
+					})}
+			>
+				Open Client UI
+			</button>
+		{/if}
 	</div>
 	<span class="head">Program Identifier:</span>
 	<span class="itm"
