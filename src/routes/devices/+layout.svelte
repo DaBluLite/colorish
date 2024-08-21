@@ -1,13 +1,14 @@
 <script lang="ts">
+	import { goto, invalidateAll } from "$app/navigation";
 	import TabBar from "$lib/components/TabBar.svelte";
 	import { boundClients } from "$lib/store";
 	import { getClientDisplayName } from "$lib/utils/utils";
-	import { redirect } from "@sveltejs/kit";
 	let tabs = [
 		{
 			title: "This Manager",
 			href: "/devices/this/about",
 			activeref: "/devices/this",
+			onClick: () => invalidateAll(),
 		},
 	];
 
@@ -17,7 +18,7 @@
 		data.boundClientKey &&
 		data.url.pathname.includes(encodeURI(data.boundClientKey))
 	) {
-		redirect(302, `/sources/${data.boundClientKey}/about`);
+		goto(`/sources/${data.boundClientKey}/about`);
 	}
 
 	Object.values($boundClients).forEach((cl) => {
@@ -29,6 +30,7 @@
 			title: getClientDisplayName(tabTitle),
 			href: `/devices/${encodeURI(cl.boundKey)}/about`,
 			activeref: `/devices/${encodeURI(cl.boundKey)}`,
+			onClick: () => invalidateAll(),
 		});
 	});
 
@@ -60,6 +62,7 @@
 						title: getClientDisplayName(tabTitle),
 						href: `/devices/${encodeURI(cl.boundKey)}/about`,
 						activeref: `/devices/${encodeURI(cl.boundKey)}`,
+						onClick: () => invalidateAll(),
 					});
 			})
 	);

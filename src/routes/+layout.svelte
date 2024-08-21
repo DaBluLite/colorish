@@ -187,6 +187,13 @@
 	<nav class="global_nav">
 		<a href="/" class={$page.url.pathname == "/" ? "active" : ""}></a>
 		<a
+			href="/creator"
+			class={$page.url.pathname == "/creator" ||
+			$page.url.pathname == "/signin"
+				? "active"
+				: ""}>&#xF64D;</a
+		>
+		<a
 			href="/settings/main"
 			class={$page.url.pathname.startsWith("/settings") ? "active" : ""}
 			></a

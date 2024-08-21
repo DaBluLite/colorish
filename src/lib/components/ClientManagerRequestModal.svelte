@@ -18,7 +18,8 @@
 				/>
 				<span
 					>{getClientDisplayName(Object.values(boundKey)[0])} has requested
-					manager access</span
+					manager access. This will allow this app to change colorways
+					to all connected clients.</span
 				>
 			</div>
 			<div class="modal-footer">
@@ -35,6 +36,22 @@
 						);
 					}}>Accept</button
 				>
+				<button
+					class="button surface"
+					on:click={() => {
+						open = false;
+						window.electron.send(
+							"complication:manager-role:manager-updated",
+							boundKey
+						);
+						setTimeout(() => {
+							window.electron.send("sendToWsClient", {
+								boundKey: boundKey,
+								type: "complication:manager-role:revoked",
+							});
+						}, 300000);
+					}}>Accept for 5mins</button
+				>
 			</div>
 		</dialog>
 	</div>
@@ -43,5 +60,8 @@
 <style lang="scss">
 	.modal-content {
 		min-width: 400px;
+	}
+	.modal {
+		max-width: 500px;
 	}
 </style>

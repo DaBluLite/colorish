@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { DataStore } from "$lib/api";
-	import { savecolorwaymodal_open } from "$lib/store";
-	import { onMount, onDestroy, createEventDispatcher } from "svelte";
+	import { onMount, createEventDispatcher } from "svelte";
 	import ModalHeaderClose from "$lib/components/ModalHeaderClose.svelte";
+
+	import "bootstrap-icons/font/bootstrap-icons.scss";
+	import PlusIcon from "$lib/components/PlusIcon.svelte";
+	import { goto } from "$app/navigation";
 
 	let customColorwayStores: { name: string; colorways: Colorway[] }[] = [];
 
@@ -13,7 +16,7 @@
 		}[];
 	});
 
-	onDestroy(() => savecolorwaymodal_open.set(false));
+	export let open = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -21,16 +24,15 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-{#if $savecolorwaymodal_open}
-	<div
-		class="backdrop"
-		on:click|self={() => savecolorwaymodal_open.set(false)}
-	>
+{#if open}
+	<div class="backdrop" on:click|self={() => (open = false)}>
 		<dialog open class="modal">
 			<div class="modal-content">
 				<ModalHeaderClose
-					modal_title="Save colorway:"
-					modal_open={savecolorwaymodal_open}
+					modal_title="Save colorway to:"
+					modal_open={{
+						set: (e) => (open = e),
+					}}
 				/>
 				<div>
 					{#each customColorwayStores as { name: customColorwaySourceName, colorways: offlineStoreColorways }}
@@ -85,6 +87,14 @@
 							</div>
 						</div>
 					{/each}
+					<div
+						class="source thin"
+						on:click={() => goto("/devices/this/offline")}
+					>
+						<span class="title">
+							<PlusIcon /> Create New...
+						</span>
+					</div>
 				</div>
 			</div>
 		</dialog>
@@ -92,7 +102,26 @@
 {/if}
 
 <style lang="scss">
+	.icon {
+		font-family: bootstrap-icons;
+		text-decoration: none;
+		color: #fff;
+	}
 	.modal-content {
 		min-width: 500px;
+	}
+	.source {
+		margin-bottom: 8px;
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+	.source.thin {
+		padding: 8px 12px;
+		cursor: pointer;
+		transition: 0.2s ease;
+		&:hover {
+			background-color: #1a1a1a;
+		}
 	}
 </style>

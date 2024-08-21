@@ -6,6 +6,9 @@
 	let sourcesList: StoreItem[] = [];
 	let colorwaySourceFiles: { name: string; url: string }[] = [];
 
+	let previewSource = { name: "" };
+	let sourcepreviewmodal_open = false;
+
 	onMount(() => {
 		if (!searchValue) {
 			(async function () {
@@ -25,6 +28,7 @@
 	import PalleteIcon from "../../lib/components/PalleteIcon.svelte";
 	import DownloadIcon from "../../lib/components/DownloadIcon.svelte";
 	import DeleteIcon from "../../lib/components/DeleteIcon.svelte";
+	import SourcePreviewModal from "$lib/components/SourcePreviewModal.svelte";
 </script>
 
 <div style="display: flex; margin-bottom: 8px;">
@@ -82,14 +86,18 @@
 						by {source.authorGh}
 					</span>
 				</div>
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					style="gap: 8px; align-items: center; width: 100%; display: flex;"
 				>
-					<a
-						target="_blank"
-						href={"https://github.com/" + source.authorGh}
-						><img src={GitHubIcon} alt="GitHub" /></a
-					>
+					<img
+						src={GitHubIcon}
+						alt="GitHub"
+						on:click={() =>
+							window.electron.openExtenralPage(
+								"https://github.com/" + source.authorGh
+							)}
+					/>
 					<button
 						class="button surface"
 						style="margin-left: auto;"
@@ -128,7 +136,13 @@
 							<DownloadIcon width={14} height={14} /> Add to Sources
 						{/if}
 					</button>
-					<button class="button surface" on:click={async () => {}}>
+					<button
+						class="button surface"
+						on:click={async () => {
+							previewSource = source;
+							sourcepreviewmodal_open = true;
+						}}
+					>
 						<PalleteIcon width={14} height={14} />
 						Preview
 					</button>
@@ -137,6 +151,13 @@
 		{/if}
 	{/each}
 </div>
+
+{#if sourcepreviewmodal_open}
+	<SourcePreviewModal
+		bind:source={previewSource}
+		bind:open={sourcepreviewmodal_open}
+	/>
+{/if}
 
 <style lang="scss">
 	.scroller {

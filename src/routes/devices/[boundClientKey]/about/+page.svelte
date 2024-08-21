@@ -1,150 +1,153 @@
 <script lang="ts">
-	import { page } from "$app/stores";
 	import { boundClients } from "$lib/store";
 	import { getClientDisplayName } from "$lib/utils/utils";
-	import { redirect } from "@sveltejs/kit";
 	import { onMount } from "svelte";
+	import { page } from "$app/stores";
 
 	let noOfColors = "Loading...";
 
-	onMount(async () => (noOfColors = String(await getColorwayLenght())));
+	onMount(async () => {
+		async function getColorwayLenght() {
+			async function getOnline() {
+				const onlineComplSources: { name: string; url: string }[] =
+					Object.values($boundClients)
+						.map((cl) => {
+							if (cl.online) {
+								return cl.online.map((source) => ({
+									name: `${
+										Object.values(
+											JSON.parse(cl.boundKey)
+										)[0]
+									}: ${source.name}`,
+									url: source.url,
+								}));
+							} else return [];
+						})
+						.flat(2) as {
+						name: string;
+						url: string;
+					}[];
 
-	const boundClientKey: string = $page.params.boundClientKey;
+				const complicationResponses: Response[] = await Promise.all(
+					onlineComplSources.map(({ url }: { url: string }) =>
+						fetch(url)
+					)
+				);
 
-	if (!$boundClients[boundClientKey]) {
-		redirect(301, "/devices/this/about");
-	}
-
-	async function getColorwayLenght() {
-		async function getOnline() {
-			const onlineComplSources: { name: string; url: string }[] =
-				Object.values($boundClients)
-					.map((cl) => {
-						if (cl.online) {
-							return cl.online.map((source) => ({
-								name: `${
-									Object.values(JSON.parse(cl.boundKey))[0]
-								}: ${source.name}`,
-								url: source.url,
-							}));
-						} else return [];
-					})
-					.flat(2) as {
-					name: string;
-					url: string;
+				const colorwayData = (await Promise.all([
+					...complicationResponses
+						.map((res, i) => ({
+							response: res,
+							name: onlineComplSources[i].name,
+						}))
+						.map((res: { response: Response; name: string }) =>
+							res.response
+								.json()
+								.then((dt) => ({
+									colorways: dt.colorways as Colorway[],
+									source: res.name,
+									type: "complication:online",
+								}))
+								.catch(() => ({
+									colorways: [] as Colorway[],
+									source: res.name,
+									type: "complication:online",
+								}))
+						),
+				])) as {
+					type: SourceType;
+					source: string;
+					colorways: Colorway[];
 				}[];
 
-			const complicationResponses: Response[] = await Promise.all(
-				onlineComplSources.map(({ url }: { url: string }) => fetch(url))
-			);
+				return colorwayData;
+			}
 
-			const colorwayData = (await Promise.all([
-				...complicationResponses
-					.map((res, i) => ({
-						response: res,
-						name: onlineComplSources[i].name,
-					}))
-					.map((res: { response: Response; name: string }) =>
-						res.response
-							.json()
-							.then((dt) => ({
-								colorways: dt.colorways as Colorway[],
-								source: res.name,
-								type: "complication:online",
-							}))
-							.catch(() => ({
-								colorways: [] as Colorway[],
-								source: res.name,
-								type: "complication:online",
-							}))
-					),
-			])) as {
-				type: SourceType;
-				source: string;
-				colorways: Colorway[];
-			}[];
+			function getOffline() {
+				return Object.values($boundClients)
+					.map((cl) =>
+						cl.offline
+							? cl.offline.map((source) => ({
+									type: "complication:offline" as SourceType,
+									source: `${
+										Object.values(
+											JSON.parse(cl.boundKey)
+										)[0]
+									}: ${source.name}`,
+									colorways: source.colorways,
+							  }))
+							: []
+					)
+					.flat(2);
+			}
 
-			return colorwayData;
+			return [
+				...($boundClients[$page.params.boundClientKey] &&
+				$boundClients[$page.params.boundClientKey].online
+					? (await getOnline()).flatMap(({ colorways }) => colorways)
+					: []),
+				...($boundClients[$page.params.boundClientKey] &&
+				$boundClients[$page.params.boundClientKey].offline
+					? getOffline().flatMap(({ colorways }) => colorways)
+					: []),
+			].length;
 		}
 
-		function getOffline() {
-			return Object.values($boundClients)
-				.map((cl) =>
-					cl.offline
-						? cl.offline.map((source) => ({
-								type: "complication:offline" as SourceType,
-								source: `${
-									Object.values(JSON.parse(cl.boundKey))[0]
-								}: ${source.name}`,
-								colorways: source.colorways,
-						  }))
-						: []
-				)
-				.flat(2);
-		}
+		window.electron.receive("update-bound-clients", () => {
+			getColorwayLenght();
+		});
 
-		return [
-			...($boundClients[boundClientKey] &&
-			$boundClients[boundClientKey].online
-				? (await getOnline()).flatMap(({ colorways }) => colorways)
-				: []),
-			...($boundClients[boundClientKey] &&
-			$boundClients[boundClientKey].offline
-				? getOffline().flatMap(({ colorways }) => colorways)
-				: []),
-		].length;
-	}
-
-	window.electron.receive("update-bound-clients", () => {
-		getColorwayLenght();
+		noOfColors = String(await getColorwayLenght());
 	});
 </script>
 
 <div>
 	<div>
-		{#if $boundClients[boundClientKey].complications?.includes("manager-role")}
+		{#if $boundClients[$page.params.boundClientKey].complications?.includes("manager-role")}
 			<button
 				class="button"
 				on:click={() => {
 					window.electron.sendToClient({
-						type: $boundClients[boundClientKey].isManager
+						type: $boundClients[$page.params.boundClientKey]
+							.isManager
 							? "complication:manager-role:revoked"
 							: "complication:manager-role:granted",
-						boundKey: boundClientKey,
+						boundKey: $page.params.boundClientKey,
 					});
 				}}
 			>
-				{$boundClients[boundClientKey] &&
-				($boundClients[boundClientKey].isManager || false)
+				{$boundClients[$page.params.boundClientKey] &&
+				($boundClients[$page.params.boundClientKey].isManager || false)
 					? "Revoke"
 					: "Grant"} Manager Role
 			</button>
 		{/if}
 		<button
 			class="button"
-			on:click={() => navigator.clipboard.writeText(boundClientKey)}
+			on:click={() =>
+				navigator.clipboard.writeText($page.params.boundClientKey)}
 		>
 			Copy Bound Key
 		</button>
-		{#if $boundClients[boundClientKey].complications?.includes("remote-sources")}
+		{#if $boundClients[$page.params.boundClientKey].complications?.includes("remote-sources")}
 			<button
 				class="button"
 				on:click={() =>
 					window.electron.sendToClient({
 						type: "complication:remote-sources:update-request",
-						boundKey: boundClientKey,
+						boundKey: $page.params.boundClientKey,
 					})}
 			>
 				Request Source Update
 			</button>
 		{/if}
-		{#if $boundClients[boundClientKey].complications?.includes("ui-summon")}
+		{#if $boundClients[$page.params.boundClientKey].complications?.includes("ui-summon")}
 			<button
 				class="button"
 				on:click={() =>
 					window.electron.sendToClient({
 						type: "complication:ui-summon:summon",
-						boundKey: boundClientKey,
+						boundKey: $page.params.boundClientKey,
 					})}
 			>
 				Open Client UI
@@ -154,14 +157,14 @@
 	<span class="head">Program Identifier:</span>
 	<span class="itm"
 		>{getClientDisplayName(
-			Object.values(JSON.parse(boundClientKey))[0]
+			Object.values(JSON.parse($page.params.boundClientKey))[0]
 		)}</span
 	>
 	<span class="head">Program Type:</span>
 	<span class="itm"
 		>Client{(
-			$boundClients[boundClientKey]
-				? $boundClients[boundClientKey].isManager || false
+			$boundClients[$page.params.boundClientKey]
+				? $boundClients[$page.params.boundClientKey].isManager || false
 				: false
 		)
 			? " (Manager Role)"

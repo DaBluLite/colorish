@@ -1,15 +1,23 @@
 <script lang="ts">
 	import { page } from "$app/stores";
 
-	export let items: { title: string; href: string; activeref?: string }[] =
-		[];
+	export let items: {
+		title: string;
+		href: string;
+		activeref?: string;
+		onClick?: () => void;
+	}[] = [];
+
+	let v = () => {};
 </script>
 
 {#if items.length > 1}
 	<nav>
 		{#each items as item}
+			{@const onClick = item.onClick || v}
 			<a
 				href={item.href}
+				on:click={onClick}
 				class={$page.url.pathname.startsWith(
 					item.activeref || item.href
 				)

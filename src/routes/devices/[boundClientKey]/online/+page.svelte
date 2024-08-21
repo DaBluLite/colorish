@@ -1,15 +1,12 @@
 <script lang="ts">
-	import { page } from "$app/stores";
 	import { boundClients } from "$lib/store";
-	import { redirect } from "@sveltejs/kit";
 	import DownloadIcon from "$lib/components/DownloadIcon.svelte";
 	import CopyIcon from "$lib/components/CopyIcon.svelte";
 	import { DataStore } from "$lib/api";
 	import { onMount } from "svelte";
 	import StoreNameModal from "$lib/components/StoreNameModal.svelte";
 	import { defaultColorwaySource } from "../../../../constants";
-
-	const boundClientKey: string = $page.params.boundClientKey;
+	import { page } from "$app/stores";
 
 	let colorwaySourceFiles: { name: string; url: string }[] = [];
 	let customColorwayStores: { name: string; colorways: Colorway[] }[] = [];
@@ -47,13 +44,13 @@
 	bind:open={createofflinesource_open}
 />
 
-{#if !$boundClients[boundClientKey].offline && !$boundClients[boundClientKey].online}
+{#if !$boundClients[$page.params.boundClientKey].offline && !$boundClients[$page.params.boundClientKey].online}
 	<span
 		>How did you even get here, this bound client has no shared sources</span
 	>
 {:else}
 	<div class="main">
-		{#each $boundClients[boundClientKey].online as colorwaySourceFile, i}
+		{#each $boundClients[$page.params.boundClientKey].online as colorwaySourceFile, i}
 			<div class="source">
 				<div class="hoverRoll">
 					<span class="title hoverRoll_normal">

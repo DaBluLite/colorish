@@ -71,14 +71,14 @@
 	flex-direction: column;
 	gap: 4px;
 	padding: 16px;
-	& .modal-header {
-		color: #fff;
-		margin: 0;
-		font-weight: normal;
-		font-size: 1.25em;
-		margin-bottom: 8px;
-		// font-family: "NDOT";
-	}
+}
+.modal-header {
+	color: #fff;
+	margin: 0;
+	font-weight: normal;
+	font-size: 1.25em;
+	margin-bottom: 8px;
+	// font-family: "NDOT";
 }
 .sect-header {
 	color: #fff;

@@ -146,6 +146,7 @@ wsManager.on("connection", function connection(wss) {
                     return;
                 case "complication:manager-role:request":
                     if (!ws.isManager.get()) mainWindow.webContents.send("complication:manager-role:request", data.boundKey);
+                    mainWindow.focus();
                     return;
             }
         }
@@ -154,9 +155,9 @@ wsManager.on("connection", function connection(wss) {
     mainWindow.webContents.send("client-connected");
     ws.dispatch("manager-connection-established", { MID });
 });
-const serveURL = serve({ directory: "." });
 const port = process.env.PORT || 5173;
 const dev = !app.isPackaged;
+const serveURL = serve({ directory: dev ? path.join("..", "build") : "." });
 let mainWindow;
 function createWindow() {
     let windowState = windowStateManager({ defaultWidth: 800, defaultHeight: 600 });
@@ -184,7 +185,7 @@ function createWindow() {
         width: windowState.width,
         height: windowState.height,
         title: "Colorish",
-        icon: "../colorish.png"
+        icon: "../colorish_256x256.png"
     });
     windowState.manage(mainWindow);
     mainWindow.once("ready-to-show", () => {
@@ -209,7 +210,7 @@ function createMainWindow() {
     mainWindow.once("close", () => {
         mainWindow = null;
     });
-    if (dev)
+    if(dev)
         loadVite(port);
     else
         serveURL(mainWindow);
@@ -264,3 +265,7 @@ ipcMain.on("complication:ui-summon:summon", (_, boundKey) => {
     const wsClient = wsClients.filter(ws => (typeof ws.boundKey.get() == "string" ? ws.boundKey.get() : JSON.stringify(ws.boundKey.get())) == JSON.stringify(boundKey))[0]
     wsClient.dispatch("complication:ui-summon:summon");
 });
+
+ipcMain.on("getFocus", () => {
+    mainWindow.focus();
+})

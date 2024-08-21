@@ -15,3 +15,5 @@ export const boundClients = writable({} as {
         isManager?: boolean
     };
 });
+
+export const currentapp = writable("this");
